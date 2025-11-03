@@ -1,101 +1,90 @@
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body {
-  height: 300vh;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(180deg, #f9f9f9, #e0f0ff);
-  color:#222;
-  overflow-x:hidden;
+body {
+  background: radial-gradient(circle at top, #e0f0ff, #d0e0f5);
+  font-family: 'Segoe UI', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-/* MAIN HEADINGS (Connor & About) */
-.main-heading {
-  font-weight:900;
-  font-size:3.5rem;
-  color:#0066ff;
-  margin-bottom:20px;
+.card-stack-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-/* Sections */
-.centered-section {
-  position: fixed;
-  top:50%;
-  left:50%;
-  transform: translate(-50%,-50%);
-  text-align:center;
-  width:90%;
-  max-width:1200px;
-  transition: all 0.6s ease;
-  padding:20px;
-  background:white;
-  border-radius:12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  opacity:1;
-  pointer-events:auto;
-  z-index:10;
+button {
+  background: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+button:hover {
+  background: #004bb5;
+  transform: scale(1.05);
 }
 
-.offscreen-top { top:-150%; transform: translate(-50%,0); opacity:0; pointer-events:none; }
-.offscreen-bottom { top:150%; transform: translate(-50%,0); opacity:0; pointer-events:none; }
-
-/* Buttons */
-.button-container { margin-top:30px; display:flex; justify-content:center; gap:20px; }
-.button-container button {
-  padding:12px 24px; font-size:1rem; border:none; border-radius:6px;
-  background:#0066ff; color:white; cursor:pointer; transition:background 0.3s ease;
-}
-.button-container button:hover { background:#004bb5; }
-
-/* Social Buttons */
-.social-buttons { display:flex; justify-content:center; gap:16px; margin-bottom:20px; }
-.social-buttons img { width:24px; height:24px; cursor:pointer; transition: transform 0.3s ease; }
-.social-buttons img:hover { transform: scale(1.15); filter: brightness(0.8); }
-
-/* PODIUM LAYOUT */
-#projects-section {
-  background:none;
-  box-shadow:none;
-  padding:60px 0;
-  width:100%;
-  max-width:none;
-  display:flex;
-  justify-content:center;
-  align-items:flex-end;
+.card-stack {
+  position: relative;
+  width: 340px;
+  height: 480px;
+  perspective: 1000px;
 }
 
-.podium-container {
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  gap:40px;
-  perspective:1000px;
-  flex-wrap:wrap;
+.card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
-.podium {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  border-radius:12px;
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
-  box-shadow:0 10px 25px rgba(0,0,0,0.15);
-  opacity:0;
-  transform: translateY(80px);
-  transition: all 0.6s cubic-bezier(.2,.8,.2,1);
+.card img {
+  max-width: 80%;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
-.podium.visible { opacity:1; transform: translateY(0); }
+.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #0066ff;
+}
 
-.podium img { width:100%; border-radius:8px 8px 0 0; transition: transform 0.2s ease; }
-.podium-text { padding:15px; color:#fff; text-align:center; border-radius:0 0 12px 12px; }
-.podium-text h2 { margin-bottom:8px; font-weight:700; }
-.podium-text p { font-size:1rem; line-height:1.4; }
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+.social-buttons img {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.3s;
+}
+.social-buttons img:hover { transform: scale(1.2); }
 
-.gold { width:340px; transform: translateY(-20px); }
-.gold .podium-text { background: linear-gradient(135deg, #ffcc33, #e0b200); }
-.silver { width:300px; transform: translateY(10px); }
-.silver .podium-text { background: linear-gradient(135deg, #dcdcdc, #b0b0b0); }
-.bronze { width:260px; transform: translateY(30px); }
-.bronze .podium-text { background: linear-gradient(135deg, #d68b45, #b06a2e); }
-
-#about-section p { font-size:1.2rem; max-width:600px; margin:0 auto; color:#444; }
+.card.hidden {
+  opacity: 0;
+  transform: translateY(50px) rotateX(30deg);
+  pointer-events: none;
+}
