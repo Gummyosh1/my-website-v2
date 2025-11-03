@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Connor Lafferty Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+</head>
+<body>
+
+  <!-- NAME SECTION -->
+  <section id="name-section" class="centered-section">
+    <h1 class="main-heading">Connor Lafferty</h1>
+
+    <div class="social-buttons">
+      <a href="https://www.linkedin.com/in/connor-lafferty-911092298" target="_blank">
+        <img src="linkedin.png" alt="LinkedIn" />
+      </a>
+      <a href="https://github.com/gummyosh1" target="_blank">
+        <img src="github.png" alt="GitHub" />
+      </a>
+    </div>
+
+    <div class="button-container">
+      <button onclick="scrollToSection('projects')">View Work</button>
+      <button onclick="scrollToSection('about')">About Me</button>
+    </div>
+  </section>
+
+  <!-- PROJECTS / PODIUM SECTION -->
+  <section id="projects-section" class="centered-section offscreen-bottom">
+    <div class="podium-container">
+      <!-- Bronze -->
+      <div class="podium bronze hidden">
+        <a href="https://www.youtube.com/@CKCStudiosNSuch" target="_blank">
+          <img src="devlogs-image.png" alt="Devlogs" />
+        </a>
+        <div class="podium-text">
+          <h2>Devlogs</h2>
+          <p>Videos detailing my development process and thoughts while creating games and apps.</p>
+        </div>
+      </div>
+
+      <!-- Gold -->
+      <div class="podium gold hidden">
+        <a href="https://apps.apple.com/us/app/a-fish-in-sea/id6670383160" target="_blank">
+          <img src="fish-in-sea-image.png" alt="A Fish In Sea" />
+        </a>
+        <div class="podium-text">
+          <h2>A Fish In Sea</h2>
+          <p>My gamified to-do list app built in Unity with C#. Complete tasks in real life to earn bait in-game. Then play fun fishing minigames to try and make gold, sail the seas, and catch every fish! Available on iOS.</p>
+        </div>
+      </div>
+
+      <!-- Silver -->
+      <div class="podium silver hidden">
+        <a href="https://www.youtube.com/@Gummyoshi" target="_blank">
+          <img src="gummyoshi-image.png" alt="Gummyoshi" />
+        </a>
+        <div class="podium-text">
+          <h2>Gummyoshi</h2>
+          <p>My YouTube channel with over 20,000 subscribers and 8 million views. Focused on gaming, industry analysis, and creative commentary.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section id="about-section" class="centered-section offscreen-bottom">
+    <h1 class="main-heading">About Me</h1>
+    <p style="line-height:1.8;">Heyo! I’m Connor Lafferty, a software developer who loves making things (specifically games). I've created one solo-developed game in C# and plan to make my next one in C++. Most art in my games is made by my wonderful girlfriend Colbi :D. Outside of development I love playing League, Hollow Knight, making a newspaper, and going to the gym!</p>
+  </section>
+
+  <script>
+    // Scroll sections
+    function scrollToSection(section) {
+      const vh = window.innerHeight;
+      if (section === 'projects') window.scrollTo({ top: vh * 1, behavior: 'smooth' });
+      else if (section === 'about') window.scrollTo({ top: vh * 2, behavior: 'smooth' });
+    }
+
+    // Section scroll animations
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const vh = window.innerHeight;
+      const nameSection = document.getElementById('name-section');
+      const projectsSection = document.getElementById('projects-section');
+      const aboutSection = document.getElementById('about-section');
+
+      if (scrollY < vh / 2) {
+        nameSection.className = 'centered-section';
+        projectsSection.className = 'centered-section offscreen-bottom';
+        aboutSection.className = 'centered-section offscreen-bottom';
+      } else if (scrollY < vh * 1.5) {
+        nameSection.className = 'centered-section offscreen-top';
+        projectsSection.className = 'centered-section';
+        aboutSection.className = 'centered-section offscreen-bottom';
+      } else {
+        nameSection.className = 'centered-section offscreen-top';
+        projectsSection.className = 'centered-section offscreen-top';
+        aboutSection.className = 'centered-section';
+      }
+    });
+
+    // IntersectionObserver for podium entrance animation
+    const podiumSection = document.querySelector('#projects-section');
+    const podiums = document.querySelectorAll('.podium');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          podiums.forEach((podium, i) => {
+            setTimeout(() => {
+              podium.classList.add('visible');
+              podium.classList.remove('hidden');
+            }, i * 150); // stagger: gold first, silver next, bronze last
+          });
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(podiumSection);
+
+    // BALATRO EFFECT: APPLY TO ENTIRE PODIUM CONTAINER
+    document.querySelectorAll('.podium').forEach(card => {
+      let animFrame;
+      card.addEventListener('mousemove', e => {
+        if (animFrame) cancelAnimationFrame(animFrame);
+        animFrame = requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const maxTilt = 10;
+          const rotateX = ((y - centerY) / centerY) * -maxTilt;
+          const rotateY = ((x - centerX) / centerX) * maxTilt;
+          card.style.transform = `translateY(${card.dataset.offsetY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        });
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transition = 'transform 0.3s ease';
+        card.style.transform = `translateY(${card.dataset.offsetY}px) rotateX(0deg) rotateY(0deg) scale(1)`;
+        setTimeout(() => card.style.transition = '', 300);
+      });
+      card.dataset.offsetY = parseFloat(window.getComputedStyle(card).transform.split(',')[5]) || 0;
+    });
+  </script>
+
+</body>
+</html>
