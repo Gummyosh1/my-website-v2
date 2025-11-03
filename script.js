@@ -1,39 +1,40 @@
-const cards = Array.from(document.querySelectorAll('.card'));
-let current = 0;
+const stackEl = document.getElementById('stack');
+let deck = Array.from(stackEl.querySelectorAll('.card')); // DOM order = visual order (top first)
 
-function showCard(index) {
-  cards.forEach((card, i) => {
-    card.style.zIndex = cards.length - i;
-    if (i === index) {
-      card.classList.remove('hidden');
-      card.style.transform = 'translateY(0) rotateX(0)';
-      card.style.opacity = 1;
-    } else {
-      card.classList.add('hidden');
-    }
+function layout() {
+  deck.forEach((card, i) => {
+    card.dataset.pos = i; // for filter depth
+    const lift = Math.max(0, 14 - i * 4);     // slight vertical offset
+    const tilt = (i === 0 ? 0 : (i % 2 ? -2 : 2)); // tiny alternating tilt
+    const scale = 1 - Math.min(i, 4) * 0.02;  // subtle scale back
+    card.style.zIndex = String(100 - i);
+    card.style.transform = `translateY(${i * 6}px) rotate(${tilt}deg) scale(${scale})`;
+    card.style.opacity = i > 4 ? 0 : 1; // hide anything past 5 visually
   });
 }
 
-function drawCard() {
-  const currentCard = cards[current];
-  currentCard.style.transform = 'translateY(-50px) rotateX(60deg)';
-  currentCard.style.opacity = 0;
+function draw() {
+  if (!deck.length) return;
+  const top = deck[0];
+  top.classList.add('slide-out');
   setTimeout(() => {
-    cards.push(cards.shift()); // Move first card to end
-    current = 0;
-    showCard(current);
-  }, 400);
+    top.classList.remove('slide-out');
+    stackEl.appendChild(top);
+    deck.push(deck.shift());
+    layout();
+  }, 420);
 }
 
-function shuffleDeck() {
-  for (let i = cards.length - 1; i > 0; i--) {
+function shuffle() {
+  for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [cards[i], cards[j]] = [cards[j], cards[i]];
+    [deck[i], deck[j]] = [deck[j], deck[i]];
   }
-  showCard(0);
+  deck.forEach(el => stackEl.appendChild(el));
+  layout();
 }
 
-document.getElementById('next-btn').addEventListener('click', drawCard);
-document.getElementById('shuffle-btn').addEventListener('click', shuffleDeck);
+document.getElementById('draw').addEventListener('click', draw);
+document.getElementById('shuffle').addEventListener('click', shuffle);
 
-showCard(current);
+layout();
